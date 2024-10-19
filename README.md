@@ -11,3 +11,8 @@ Temos dez threads que vai armazenar um array do tipo {color: string, xPos: numbe
 - Implementar um algoritmo de consenso que mantenha o array sincronizado em todas as máquinas
 - Implementar um motor de vizualização da posição de todos os pontos de vista, de modo que seja possível clicar numa máquina e ver como ela está no jogo
 
+Passos
+
+- Criar projeto com Maven
+- Construir backend (sem precisar de front)
+- Constuir front
