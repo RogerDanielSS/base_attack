@@ -1,4 +1,4 @@
-package domain;
+package consensus.domain;
 
 import java.io.*;
 import java.net.*;

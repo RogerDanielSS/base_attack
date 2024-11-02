@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-import domain.Node;
+import consensus.domain.Node;
 
 public class App {
     public static void main(String[] args) {
