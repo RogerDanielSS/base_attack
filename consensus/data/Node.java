@@ -1,4 +1,4 @@
-package consensus.domain;
+package consensus.data;
 
 import java.io.*;
 import java.net.*;
@@ -83,18 +83,19 @@ public class Node extends Thread {
         // Encontra a ordem mais popular
         Map.Entry<List<Integer>, Integer> consensusOrder = receivedOrders.entrySet().stream()
                 .max(Map.Entry.comparingByValue())
-                .orElseThrow(); // Deve sempre retornar uma entrada válida
-
+                .orElseThrow(() -> new RuntimeException("Consensus decision not found")); // Deve sempre retornar uma entrada válida
+    
         // Atualiza o array para a ordem consensual se necessário
         ArrayList<Integer> newOrder = new ArrayList<>(consensusOrder.getKey());
         if (!newOrder.equals(numbers)) {
             numbers = newOrder;
-            // System.out.println("Node " + nodeId + " updated its order to: " + numbers);
         } else if (checkReachedGeneralConsensus()) {
             // Se o array já estiver em consenso, marca o nó como tendo alcançado consenso
             consensusReached = true;
         }
     }
+    
+    
 
     private boolean checkReachedGeneralConsensus() {
         System.out.println(receivedOrders.size());
