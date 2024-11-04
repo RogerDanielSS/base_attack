@@ -1,37 +1,29 @@
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import consensus.presentation.pages_controllers.DiscussionRoomController;
 
-import consensus.data.Node;
+public class App extends Application { // Inicio da classe App
+  public static void main(String[] args) throws Exception { // inicio do metodo main
+    launch(args);
+    DiscussionRoomController DISCUSSION_ROOM_CONTROLLER = new DiscussionRoomController();
+  }// fim do metodo main
 
-public class App {
-    public static void main(String[] args) {
-        int nodeCount = 10;
-        List<Node> nodes = new ArrayList<>();
-        List<Integer> ports = new ArrayList<>();
-        Random random = new Random();
-
-        // Definir números base para o array de números
-        ArrayList<Integer> baseNumbers = new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10));
-
-        // Configurar portas
-        for (int i = 0; i < nodeCount; i++) {
-            ports.add(5000 + i);
-        }
-
-        // Criar e iniciar cada nó com números em ordem aleatória
-        for (int i = 0; i < nodeCount; i++) {
-            Collections.shuffle(baseNumbers, random);
-            ArrayList<Integer> nodeNumbers = new ArrayList<>(baseNumbers);
-
-            List<Integer> otherPorts = new ArrayList<>(ports);
-            otherPorts.remove(i); // Remover a própria porta do nó
-
-            Node node = new Node(i, nodeNumbers, ports.get(i), otherPorts);
-            nodes.add(node);
-            node.start();
-        }
-    }
-}
+  /*
+   * ***************************************************************
+   * Metodo: start
+   * Funcao: metodo de Aplication sobrescrito que carrega o palco
+   * Parametros: Um Stage, do javaFX
+   * Retorno: vazio
+   */
+  @Override
+  public void start(Stage stage) throws Exception { // inicio do metodo start
+    Parent root = FXMLLoader.load(getClass().getResource("consensus/presentation/pages/discussion_room.fxml"));
+    Scene Scene = new Scene(root);
+    stage.setScene(Scene);
+    stage.setResizable(false);
+    stage.show();
+  } // fim do metodo start
+} // Fim da classe App
