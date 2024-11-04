@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.Army_Movement_Controller">
+   <children>
+      <ImageView fitHeight="463.0" fitWidth="625.0" layoutX="-17.0" layoutY="-9.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../images/Mapa.jpg" />
+         </image>
+      </ImageView>
+      <Region fx:id="Point1_region" layoutX="22.0" layoutY="312.0" prefHeight="35.0" prefWidth="48.0" />
+      <ImageView fx:id="Army_Image" fitHeight="50.0" fitWidth="60.0" layoutX="272.0" layoutY="183.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../images/terracotta-army_984114.png" />
+         </image>
+      </ImageView>
+      <Region fx:id="Point2_region" layoutX="31.0" layoutY="123.0" prefHeight="45.0" prefWidth="48.0" />
+      <Region fx:id="Point3_region" layoutX="88.0" layoutY="23.0" prefHeight="45.0" prefWidth="48.0" />
+      <Region fx:id="Point4_region" layoutX="241.0" layoutY="14.0" prefHeight="45.0" prefWidth="48.0" />
+      <Region fx:id="Point5_region" layoutX="371.0" layoutY="1.0" prefHeight="45.0" prefWidth="48.0" />
+      <Region fx:id="Point6_region" layoutX="460.0" layoutY="68.0" prefHeight="45.0" prefWidth="48.0" />
+      <Region fx:id="Point7_region" layoutX="532.0" layoutY="234.0" prefHeight="45.0" prefWidth="48.0" />
+      <Region fx:id="Point8_region" layoutX="478.0" layoutY="330.0" prefHeight="35.0" prefWidth="48.0" />
+      <Region fx:id="Point9_region" layoutX="405.0" layoutY="357.0" prefHeight="35.0" prefWidth="48.0" />
+      <Region fx:id="Point10_region" layoutX="252.0" layoutY="357.0" prefHeight="35.0" prefWidth="48.0" />
+   </children>
+</AnchorPane>

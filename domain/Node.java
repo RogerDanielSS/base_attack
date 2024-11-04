@@ -42,9 +42,10 @@ public class Node extends Thread {
                 Thread.sleep(1000);
             }
 
-            System.out.println("Node " + nodeId + " reached final consensus on order: " + numbers);
+            // System.out.println("Node " + nodeId + " reached final consensus on order: " +
+            // numbers);
         } catch (IOException | InterruptedException e) {
-            System.out.println("Node " + nodeId + " could not start: " + e.getMessage());
+            // System.out.println("Node " + nodeId + " could not start: " + e.getMessage());
         }
     }
 
@@ -54,10 +55,11 @@ public class Node extends Thread {
                 try (Socket socket = new Socket("localhost", otherPort);
                         ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream())) {
                     out.writeObject(numbers); // Envia a ordem atual
-                    System.out.println("Node " + nodeId + " sent proposal to port " + otherPort);
+                    // System.out.println("Node " + nodeId + " sent proposal to port " + otherPort);
                 } catch (IOException e) {
-                    System.out.println(
-                            "Node " + nodeId + " could not connect to port " + otherPort + ": " + e.getMessage());
+                    // System.out.println(
+                    // "Node " + nodeId + " could not connect to port " + otherPort + ": " +
+                    // e.getMessage());
                 }
             }).start();
         }
@@ -69,12 +71,13 @@ public class Node extends Thread {
                     ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
                 @SuppressWarnings("unchecked")
                 ArrayList<Integer> receivedOrder = (ArrayList<Integer>) in.readObject();
-                System.out.println("Node " + nodeId + " received order: " + receivedOrder);
+                // System.out.println("Node " + nodeId + " received order: " + receivedOrder);
 
                 // Registra e conta a ordem recebida
                 receivedOrders.merge(receivedOrder, 1, Integer::sum);
             } catch (IOException | ClassNotFoundException e) {
-                System.out.println("Node " + nodeId + " connection error: " + e.getMessage());
+                // System.out.println("Node " + nodeId + " connection error: " +
+                // e.getMessage());
             }
         }
     }
@@ -83,7 +86,7 @@ public class Node extends Thread {
         // Encontra a ordem mais popular
         Map.Entry<List<Integer>, Integer> consensusOrder = receivedOrders.entrySet().stream()
                 .max(Map.Entry.comparingByValue())
-                .orElseThrow(); // Deve sempre retornar uma entrada válida
+                .orElseThrow(null); // Deve sempre retornar uma entrada válida
 
         // Atualiza o array para a ordem consensual se necessário
         ArrayList<Integer> newOrder = new ArrayList<>(consensusOrder.getKey());
@@ -97,7 +100,7 @@ public class Node extends Thread {
     }
 
     private boolean checkReachedGeneralConsensus() {
-        System.out.println(receivedOrders.size());
+        // System.out.println(receivedOrders.size());
         if (receivedOrders.size() == 1) {
             // Get the only entry in the map
             int count = receivedOrders.values().iterator().next();
@@ -105,5 +108,9 @@ public class Node extends Thread {
             return count >= 9;
         }
         return false;
+    }
+
+    public ArrayList<Integer> getNumbers() {
+        return numbers;
     }
 }

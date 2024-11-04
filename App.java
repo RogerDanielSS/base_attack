@@ -4,9 +4,18 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
+import controller.Army_Movement_Controller;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Point2D;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+
 import domain.Node;
 
-public class App {
+public class App extends Application {
+
     public static void main(String[] args) {
         int nodeCount = 10;
         List<Node> nodes = new ArrayList<>();
@@ -33,5 +42,18 @@ public class App {
             nodes.add(node);
             node.start();
         }
+
+        launch(args); // Lançar a aplicação JavaFX
+    }
+
+    @Override
+    public void start(Stage palco) throws Exception {
+        Parent raiz = FXMLLoader.load(getClass().getResource("/view/Animation.fxml"));
+        Scene scene = new Scene(raiz);
+        palco.setTitle("Jogo da Forca");
+        palco.setResizable(false);
+        palco.sizeToScene();
+        palco.setScene(scene);
+        palco.show();
     }
 }
