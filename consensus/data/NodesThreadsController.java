@@ -47,7 +47,7 @@ public class NodesThreadsController {
     guiController.animateSendMessage(message, from, to);
   }
 
-  public void setSoldierSubtitle(int soldier, String subtitle) {
-    guiController.setSoldierSubtitle(soldier, subtitle);
+  public void setSoldierSubtitle(int soldier, String subtitle, String color) {
+    guiController.setSoldierSubtitle(soldier, subtitle, color);
   }
 }

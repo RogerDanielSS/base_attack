@@ -34,9 +34,8 @@ public class Node extends Thread {
             // Inicia o processo de consenso até que o consenso seja alcançado
             while (!consensusReached) {
                 Platform.runLater(() -> {
-                    threadsController.setSoldierSubtitle(nodeId, numbers.toString());
+                    threadsController.setSoldierSubtitle(nodeId, numbers.toString(), "black");
                 });
-
 
                 sendProposalToOtherNodes();
 
@@ -52,6 +51,9 @@ public class Node extends Thread {
                 Thread.sleep(3000);
             }
 
+            Platform.runLater(() -> {
+                threadsController.setSoldierSubtitle(nodeId, numbers.toString(), "green");
+            });
             System.out.println("Node " + nodeId + " reached final consensus on order: " + numbers);
         } catch (IOException | InterruptedException e) {
             System.out.println("Node " + nodeId + " could not start: " + e.getMessage());
@@ -67,7 +69,6 @@ public class Node extends Thread {
                     Platform.runLater(() -> {
                         threadsController.animateSendMessage(numbers.toString(), nodeId, otherPort - 5000);
                     });
-
 
                     System.out.println("Node " + nodeId + " sent proposal to port " + otherPort);
                 } catch (IOException e) {

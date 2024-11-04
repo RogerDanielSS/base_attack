@@ -87,7 +87,7 @@ public class DiscussionRoomController implements Initializable {
       messageLabel.setStyle("-fx-background-color: yellow; -fx-text-fill: black;");
       messageLabel.setLayoutX(endX);
       messageLabel.setLayoutY(endY - 20);
-      BACKGROUND.getChildren().add(messageLabel);
+      // BACKGROUND.getChildren().add(messageLabel);
 
       // Pause to show the message for 2 seconds
       PauseTransition pause = new PauseTransition(Duration.seconds(2));
@@ -99,11 +99,11 @@ public class DiscussionRoomController implements Initializable {
     translateTransition.play();
   }
 
-  public void setSoldierSubtitle(int soldier, String subtitle) {
+  public void setSoldierSubtitle(int soldier, String subtitle, String color) {
     ImageView soldierImage = getSoldierImageView(soldier);
 
     // Calculate position for the subtitle below the soldier
-    double xPos = soldierImage.getLayoutX() + soldierImage.getFitWidth() / 2;
+    double xPos = soldierImage.getLayoutX() + soldierImage.getFitWidth() / 2 - 50;
     double yPos = soldierImage.getLayoutY() + soldierImage.getFitHeight() + 5;
 
     // Check if a subtitle already exists for this soldier
@@ -111,7 +111,7 @@ public class DiscussionRoomController implements Initializable {
       // Create a new subtitle label
       Label subtitleLabel = new Label(subtitle);
       subtitleLabel.setTextFill(Color.WHITE);
-      subtitleLabel.setStyle("-fx-background-color: black; -fx-padding: 2;");
+      subtitleLabel.setStyle("-fx-background-color: " + color + "; -fx-padding: 2;");
       subtitleLabel.setLayoutX(xPos);
       subtitleLabel.setLayoutY(yPos);
       subtitleLabel.setTextAlignment(TextAlignment.CENTER);
@@ -122,8 +122,9 @@ public class DiscussionRoomController implements Initializable {
       // Add the label to the background
       BACKGROUND.getChildren().add(subtitleLabel);
     } else {
-      // Update the existing subtitle text
+      // Update the existing subtitle text and color
       soldierSubtitles[soldier].setText(subtitle);
+      soldierSubtitles[soldier].setStyle("-fx-background-color: " + color + "; -fx-padding: 2;");
     }
   }
 
