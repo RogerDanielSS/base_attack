@@ -113,7 +113,6 @@ public class Node extends Thread {
     }
 
     private boolean checkReachedGeneralConsensus() {
-        System.out.println(receivedOrders.size());
         if (receivedOrders.size() == 1) {
             // Get the only entry in the map
             int count = receivedOrders.values().iterator().next();
