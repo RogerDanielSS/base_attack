@@ -33,6 +33,11 @@ public class Node extends Thread {
 
             // Inicia o processo de consenso até que o consenso seja alcançado
             while (!consensusReached) {
+                Platform.runLater(() -> {
+                    threadsController.setSoldierSubtitle(nodeId, numbers.toString());
+                });
+
+
                 sendProposalToOtherNodes();
 
                 // Limpa as ordens recebidas para uma nova rodada e aguarda propostas dos outros
@@ -58,10 +63,10 @@ public class Node extends Thread {
             new Thread(() -> {
                 try (Socket socket = new Socket("localhost", otherPort);
                         ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream())) {
-                    out.writeObject(numbers); // Envia a ordem atual
+                    out.writeObject(numbers);
                     Platform.runLater(() -> {
                         threadsController.animateSendMessage(numbers.toString(), nodeId, otherPort - 5000);
-                    });// Fim do metodo runLater
+                    });
 
 
                     System.out.println("Node " + nodeId + " sent proposal to port " + otherPort);

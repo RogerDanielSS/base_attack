@@ -14,6 +14,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 
 public class DiscussionRoomController implements Initializable {
@@ -26,6 +27,9 @@ public class DiscussionRoomController implements Initializable {
 
   @FXML
   private ImageView SOLDIER0, SOLDIER1, SOLDIER2, SOLDIER3, SOLDIER4, SOLDIER5, SOLDIER6, SOLDIER7, SOLDIER8, SOLDIER9;
+
+
+  private Label[] soldierSubtitles = new Label[10];
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
@@ -93,6 +97,34 @@ public class DiscussionRoomController implements Initializable {
 
     // Start the animation
     translateTransition.play();
+  }
+
+  public void setSoldierSubtitle(int soldier, String subtitle) {
+    ImageView soldierImage = getSoldierImageView(soldier);
+
+    // Calculate position for the subtitle below the soldier
+    double xPos = soldierImage.getLayoutX() + soldierImage.getFitWidth() / 2;
+    double yPos = soldierImage.getLayoutY() + soldierImage.getFitHeight() + 5;
+
+    // Check if a subtitle already exists for this soldier
+    if (soldierSubtitles[soldier] == null) {
+      // Create a new subtitle label
+      Label subtitleLabel = new Label(subtitle);
+      subtitleLabel.setTextFill(Color.WHITE);
+      subtitleLabel.setStyle("-fx-background-color: black; -fx-padding: 2;");
+      subtitleLabel.setLayoutX(xPos);
+      subtitleLabel.setLayoutY(yPos);
+      subtitleLabel.setTextAlignment(TextAlignment.CENTER);
+
+      // Store the label in the array
+      soldierSubtitles[soldier] = subtitleLabel;
+
+      // Add the label to the background
+      BACKGROUND.getChildren().add(subtitleLabel);
+    } else {
+      // Update the existing subtitle text
+      soldierSubtitles[soldier].setText(subtitle);
+    }
   }
 
   private ImageView getSoldierImageView(int index) {
