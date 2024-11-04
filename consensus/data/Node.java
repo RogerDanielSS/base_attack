@@ -4,7 +4,10 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
+import javafx.application.Platform;
+
 public class Node extends Thread {
+    private NodesThreadsController threadsController;
     private final int nodeId;
     private ArrayList<Integer> numbers;
     private final int port;
@@ -13,11 +16,13 @@ public class Node extends Thread {
     private volatile boolean consensusReached = false; // Indica se o nó alcançou consenso
     private ServerSocket serverSocket; // ServerSocket do nó
 
-    public Node(int nodeId, ArrayList<Integer> numbers, int port, List<Integer> otherNodePorts) {
+    public Node(NodesThreadsController threadsController, int nodeId, ArrayList<Integer> numbers, int port,
+            List<Integer> otherNodePorts) {
         this.nodeId = nodeId;
         this.numbers = numbers;
         this.port = port;
         this.otherNodePorts = otherNodePorts;
+        this.threadsController = threadsController;
     }
 
     @Override
@@ -39,7 +44,7 @@ public class Node extends Thread {
                 decideConsensus();
 
                 // Espera um pouco antes da próxima rodada (simulação de espera)
-                Thread.sleep(1000);
+                Thread.sleep(3000);
             }
 
             System.out.println("Node " + nodeId + " reached final consensus on order: " + numbers);
@@ -54,6 +59,11 @@ public class Node extends Thread {
                 try (Socket socket = new Socket("localhost", otherPort);
                         ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream())) {
                     out.writeObject(numbers); // Envia a ordem atual
+                    Platform.runLater(() -> {
+                        threadsController.animateSendMessage(numbers.toString(), nodeId, otherPort - 5000);
+                    });// Fim do metodo runLater
+
+
                     System.out.println("Node " + nodeId + " sent proposal to port " + otherPort);
                 } catch (IOException e) {
                     System.out.println(
@@ -83,8 +93,9 @@ public class Node extends Thread {
         // Encontra a ordem mais popular
         Map.Entry<List<Integer>, Integer> consensusOrder = receivedOrders.entrySet().stream()
                 .max(Map.Entry.comparingByValue())
-                .orElseThrow(() -> new RuntimeException("Consensus decision not found")); // Deve sempre retornar uma entrada válida
-    
+                .orElseThrow(() -> new RuntimeException("Consensus decision not found")); // Deve sempre retornar uma
+                                                                                          // entrada válida
+
         // Atualiza o array para a ordem consensual se necessário
         ArrayList<Integer> newOrder = new ArrayList<>(consensusOrder.getKey());
         if (!newOrder.equals(numbers)) {
@@ -94,8 +105,6 @@ public class Node extends Thread {
             consensusReached = true;
         }
     }
-    
-    
 
     private boolean checkReachedGeneralConsensus() {
         System.out.println(receivedOrders.size());

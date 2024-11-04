@@ -6,7 +6,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-public class NodesThreadsStarter {
+import consensus.presentation.pages_controllers.DiscussionRoomController;
+
+public class NodesThreadsController {
+  private DiscussionRoomController guiController;
+
+  public NodesThreadsController(DiscussionRoomController guiController) {
+    this.guiController = guiController;
+  }
+
   public void start() {
     int nodeCount = 10;
     List<Node> nodes = new ArrayList<>();
@@ -29,9 +37,13 @@ public class NodesThreadsStarter {
       List<Integer> otherPorts = new ArrayList<>(ports);
       otherPorts.remove(i); // Remover a própria porta do nó
 
-      Node node = new Node(i, nodeNumbers, ports.get(i), otherPorts);
+      Node node = new Node(this, i, nodeNumbers, ports.get(i), otherPorts);
       nodes.add(node);
       node.start();
     }
+  }
+
+  public void animateSendMessage(String message, int from, int to) {
+    guiController.animateSendMessage(message, from, to);
   }
 }
