@@ -28,7 +28,6 @@ public class DiscussionRoomController implements Initializable {
   @FXML
   private ImageView SOLDIER0, SOLDIER1, SOLDIER2, SOLDIER3, SOLDIER4, SOLDIER5, SOLDIER6, SOLDIER7, SOLDIER8, SOLDIER9;
 
-
   private Label[] soldierSubtitles = new Label[10];
 
   @Override
@@ -64,8 +63,12 @@ public class DiscussionRoomController implements Initializable {
     double endX = toSoldier.localToScene(toSoldier.getBoundsInLocal()).getMinX() + toSoldier.getFitWidth() / 2;
     double endY = toSoldier.localToScene(toSoldier.getBoundsInLocal()).getMinY() + toSoldier.getFitHeight() / 2;
 
-    // Create a blue circle for animation
-    Circle messageBall = new Circle(5, Color.BLUE);
+    // Create a color for the message based on the digits in the message
+    String colorHex = generateColorFromMessage(message);
+    Color messageColor = Color.web(colorHex);
+
+    // Create a circle with the generated color for animation
+    Circle messageBall = new Circle(5, messageColor);
     messageBall.setLayoutX(startX);
     messageBall.setLayoutY(startY);
 
@@ -84,7 +87,7 @@ public class DiscussionRoomController implements Initializable {
 
       // Display the message above the destination soldier
       Label messageLabel = new Label(message);
-      messageLabel.setStyle("-fx-background-color: yellow; -fx-text-fill: black;");
+      messageLabel.setStyle("-fx-background-color: " + toHexColor(messageColor) + "; -fx-text-fill: black;");
       messageLabel.setLayoutX(endX);
       messageLabel.setLayoutY(endY - 20);
       // BACKGROUND.getChildren().add(messageLabel);
@@ -99,6 +102,34 @@ public class DiscussionRoomController implements Initializable {
     translateTransition.play();
   }
 
+  private String toHexColor(Color color) {
+    return String.format("#%02X%02X%02X",
+        (int) (color.getRed() * 255),
+        (int) (color.getGreen() * 255),
+        (int) (color.getBlue() * 255));
+  }
+
+  // Helper method to generate a color based on message digits
+  private String generateColorFromMessage(String message) {
+    // Map each digit to a specific hex color value
+    String[] colors = {
+        "#FF0000", "#FFA500", "#FFFF00", "#008000", "#0000FF",
+        "#4B0082", "#EE82EE", "#A52A2A", "#8A2BE2", "#5F9EA0"
+    };
+
+    // Extract digits and form a color string based on unique digits
+    StringBuilder colorHex = new StringBuilder("#");
+    for (char ch : message.toCharArray()) {
+      if (Character.isDigit(ch)) {
+        int digit = Character.getNumericValue(ch);
+        colorHex.append(colors[digit].substring(1, 3)); // Get first byte of each color for simplicity
+        if (colorHex.length() >= 7)
+          break; // Limit to hex code length
+      }
+    }
+    return colorHex.length() < 7 ? colorHex.toString() : colorHex.substring(0, 7);
+  }
+
   public void setSoldierSubtitle(int soldier, String subtitle, String color) {
     ImageView soldierImage = getSoldierImageView(soldier);
 
@@ -106,12 +137,15 @@ public class DiscussionRoomController implements Initializable {
     double xPos = soldierImage.getLayoutX() + soldierImage.getFitWidth() / 2 - 50;
     double yPos = soldierImage.getLayoutY() + soldierImage.getFitHeight() + 5;
 
+    String colorHex = generateColorFromMessage(subtitle);
+    Color messageColor = Color.web(colorHex);
     // Check if a subtitle already exists for this soldier
     if (soldierSubtitles[soldier] == null) {
       // Create a new subtitle label
       Label subtitleLabel = new Label(subtitle);
       subtitleLabel.setTextFill(Color.WHITE);
-      subtitleLabel.setStyle("-fx-background-color: " + color + "; -fx-padding: 2;");
+      subtitleLabel
+          .setStyle("-fx-background-color: " + toHexColor(messageColor) + "; -fx-padding: 2;");
       subtitleLabel.setLayoutX(xPos);
       subtitleLabel.setLayoutY(yPos);
       subtitleLabel.setTextAlignment(TextAlignment.CENTER);
@@ -124,7 +158,7 @@ public class DiscussionRoomController implements Initializable {
     } else {
       // Update the existing subtitle text and color
       soldierSubtitles[soldier].setText(subtitle);
-      soldierSubtitles[soldier].setStyle("-fx-background-color: " + color + "; -fx-padding: 2;");
+      soldierSubtitles[soldier].setStyle("-fx-background-color: " + toHexColor(messageColor) + "; -fx-padding: 2;");
     }
   }
 
