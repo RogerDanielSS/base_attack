@@ -54,9 +54,13 @@ public class Node extends Thread {
             Platform.runLater(() -> {
                 threadsController.setSoldierSubtitle(nodeId, numbers.toString(), "green");
             });
-            System.out.println("Node " + nodeId + " reached final consensus on order: " + numbers);
+
+            if (nodeId == 0)
+                System.out.println("Node " + nodeId + " reached final consensus on order: " + numbers);
         } catch (IOException | InterruptedException e) {
-            System.out.println("Node " + nodeId + " could not start: " + e.getMessage());
+
+            if (nodeId == 0)
+                System.out.println("Node " + nodeId + " could not start: " + e.getMessage());
         }
     }
 
@@ -70,7 +74,8 @@ public class Node extends Thread {
                         threadsController.animateSendMessage(numbers.toString(), nodeId, otherPort - 5000);
                     });
 
-                    System.out.println("Node " + nodeId + " sent proposal to port " + otherPort);
+                    if (nodeId == 0)
+                        System.out.println("Node " + nodeId + " sent proposal to port " + otherPort);
                 } catch (IOException e) {
                     System.out.println(
                             "Node " + nodeId + " could not connect to port " + otherPort + ": " + e.getMessage());
@@ -85,12 +90,16 @@ public class Node extends Thread {
                     ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
                 @SuppressWarnings("unchecked")
                 ArrayList<Integer> receivedOrder = (ArrayList<Integer>) in.readObject();
-                System.out.println("Node " + nodeId + " received order: " + receivedOrder);
+
+                if (nodeId == 0)
+                    System.out.println("Node " + nodeId + " received order: " + receivedOrder);
 
                 // Registra e conta a ordem recebida
                 receivedOrders.merge(receivedOrder, 1, Integer::sum);
             } catch (IOException | ClassNotFoundException e) {
-                System.out.println("Node " + nodeId + " connection error: " + e.getMessage());
+
+                if (nodeId == 0)
+                    System.out.println("Node " + nodeId + " connection error: " + e.getMessage());
             }
         }
     }
@@ -102,9 +111,14 @@ public class Node extends Thread {
                 .orElseThrow(() -> new RuntimeException("Consensus decision not found")); // Deve sempre retornar uma
                                                                                           // entrada válida
 
+        if (nodeId == 0)
+            System.out.println("\n\n" + receivedOrders);
         // Atualiza o array para a ordem consensual se necessário
         ArrayList<Integer> newOrder = new ArrayList<>(consensusOrder.getKey());
         if (!newOrder.equals(numbers)) {
+
+            if (nodeId == 0)
+                System.out.println("Node " + nodeId + " changed order: " + newOrder);
             numbers = newOrder;
         } else if (checkReachedGeneralConsensus()) {
             // Se o array já estiver em consenso, marca o nó como tendo alcançado consenso
