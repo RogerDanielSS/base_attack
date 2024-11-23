@@ -56,7 +56,7 @@ public class Node extends Thread {
                 if (this.leaderPort == this.port)
                     handleOrderVoting();
 
-                Thread.sleep(3000);
+                Thread.sleep(5000);
             }
 
             System.out.println(nodeId + ": " + numbers);
@@ -74,7 +74,7 @@ public class Node extends Thread {
 
     private void handleLackOfLeader() {
         Platform.runLater(() -> {
-            threadsController.setSoldierSubtitle(nodeId, "Candidate", "yellow");
+            threadsController.setSoldierSubtitle(nodeId, nodeId + ": Candidate", "yellow");
         });
         positiveLeaderCandidatationResponses = 0;
         leaderCandidatationResponses = 0;
@@ -86,16 +86,22 @@ public class Node extends Thread {
         message.put("origin", "" + port);
 
         for (int otherPort : otherNodePorts) {
-            // Platform.runLater(() -> {
-            //     threadsController.animateSendMessage("candidate", nodeId, otherPort - 5000);
-            // });
+            Platform.runLater(() -> {
+                threadsController.animateSendMessage(nodeId + " candidated", nodeId, otherPort - 5000);
+            });
             sendMessage(message, otherPort);
+        }
+        try {
+            Thread.sleep(2100);
+
+        } catch (Exception e) {
         }
 
         try {
             while (leaderCandidatationResponses != 9 && positiveLeaderCandidatationResponses <= 4) {
                 Thread.sleep(500);
             }
+            Thread.sleep(2100);
         } catch (Exception e) {
         }
 
@@ -117,15 +123,16 @@ public class Node extends Thread {
         }
 
         try {
-            while (orderVotingResponses != 9 && positiveOrderVotingResponses <= 6) {
+            while (orderVotingResponses != 9 && positiveOrderVotingResponses <= 4) {
                 System.out.println(nodeId + " orderVotingResponses: " + orderVotingResponses);
                 System.out.println(nodeId + " positiveOrderVotingResponses: " + positiveOrderVotingResponses);
                 Thread.sleep(500);
             }
+            Thread.sleep(2100);
         } catch (Exception e) {
         }
 
-        if (positiveOrderVotingResponses > 6)
+        if (positiveOrderVotingResponses > 4)
             sendMyOrderToFollowers();
         else
             dropLeadership();
@@ -141,7 +148,23 @@ public class Node extends Thread {
         if (this.positiveLeaderCandidatationResponses > 4) {
             leaderPort = port;
             System.out.println(nodeId + " is leader");
+
+            Platform.runLater(() -> {
+                threadsController.setSoldierSubtitle(nodeId, nodeId + ": Leader", "green");
+            });
             content = "IM-THE-LEADER";
+        } else {
+            Platform.runLater(() -> {
+                threadsController.setSoldierSubtitle(nodeId, nodeId + ": Lost election", "red");
+            });
+            try {
+                Thread.sleep(1000);
+
+            } catch (Exception e) {
+            }
+            Platform.runLater(() -> {
+                threadsController.setSoldierSubtitle(nodeId, "", "transparent");
+            });
         }
 
         message.put("type", "leader-definition");
@@ -153,6 +176,16 @@ public class Node extends Thread {
     }
 
     private void dropLeadership() {
+        Platform.runLater(() -> {
+            threadsController.setSoldierSubtitle(nodeId, nodeId + ": Order refused", "red");
+        });
+        try {
+            Thread.sleep(1000);
+        } catch (Exception e) {
+        }
+        Platform.runLater(() -> {
+            threadsController.setSoldierSubtitle(nodeId, "", "transparent");
+        });
         System.out.println(port + ": Order disapproved. Droping leadership");
         HashMap<String, String> message = new HashMap<String, String>();
 
@@ -174,7 +207,15 @@ public class Node extends Thread {
 
         for (int otherPort : otherNodePorts) {
             System.out.println(nodeId + " sent order to " + otherPort);
+            Platform.runLater(() -> {
+                threadsController.animateSendMessage(numbers.toString(), nodeId, otherPort - 5000);
+            });
             sendMessage(message, otherPort);
+        }
+        try {
+            Thread.sleep(2100);
+
+        } catch (Exception e) {
         }
         setReachedConsensus();
     }
@@ -243,11 +284,19 @@ public class Node extends Thread {
     private void setReachedConsensus() {
         this.consensusReached = true;
         this.listening = false;
+        Platform.runLater(() -> {
+            threadsController.setSoldierSubtitle(nodeId, numbers.toString(), "green");
+        });
     }
 
     private void verifyAndSetLeader(HashMap<String, String> message) {
         if (message.get("content").equals("IM-THE-LEADER")) {
 
+            Platform.runLater(() -> {
+                threadsController.setSoldierSubtitle(nodeId,
+                        nodeId + ": " + (Integer.parseInt(message.get("origin")) - 5000) + " is the Leader",
+                        "purple");
+            });
             System.out.println("Node " + nodeId + " defined port " + message.get("origin") + " as its leader");
             leaderPort = Integer.parseInt(message.get("origin"));
             expectingForLeaderResponse = false;
@@ -262,6 +311,10 @@ public class Node extends Thread {
         } else if (message.get("content").equals("DROP-LEADERSHIP")
                 && ("" + leaderPort).equals(message.get("origin"))) {
             leaderPort = -1;
+
+            Platform.runLater(() -> {
+                threadsController.setSoldierSubtitle(nodeId, "", "transparent");
+            });
         }
 
         openVoting = false;
@@ -274,6 +327,13 @@ public class Node extends Thread {
         responseMessage.put("content", "" + getRandomBoolean());
         responseMessage.put("origin", "" + nodeId);
 
+        try {
+            Thread.sleep(2100);
+        } catch (Exception e) {
+        }
+        Platform.runLater(() -> {
+            threadsController.animateSendMessage("", nodeId, Integer.parseInt(message.get("origin")) - 5000);
+        });
         sendMessage(responseMessage, Integer.parseInt(message.get("origin")));
     }
 
@@ -290,6 +350,7 @@ public class Node extends Thread {
 
         if (content) {
             expectedLeaderPort = message.get("origin");
+
             this.expectingForLeaderResponse = true;
         }
 
@@ -297,6 +358,13 @@ public class Node extends Thread {
         responseMessage.put("content", "" + content);
         responseMessage.put("origin", "" + nodeId);
 
+        try {
+            Thread.sleep(2100);
+        } catch (Exception e) {
+        }
+        Platform.runLater(() -> {
+            threadsController.animateSendMessage("", nodeId, Integer.parseInt(message.get("origin")) - 5000);
+        });
         sendMessage(responseMessage, Integer.parseInt(message.get("origin")));
     }
 
