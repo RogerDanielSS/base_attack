@@ -46,7 +46,7 @@ public class Node extends Thread {
             // Inicia o processo de consenso até que o consenso seja alcançado
             while (!consensusReached) {
                 try {
-                Thread.sleep(getRandomNumber());
+                    Thread.sleep(getRandomNumber());
                 } catch (Exception e) {
                 }
 
@@ -73,6 +73,9 @@ public class Node extends Thread {
     }
 
     private void handleLackOfLeader() {
+        Platform.runLater(() -> {
+            threadsController.setSoldierSubtitle(nodeId, "Candidate", "yellow");
+        });
         positiveLeaderCandidatationResponses = 0;
         leaderCandidatationResponses = 0;
 
@@ -83,6 +86,9 @@ public class Node extends Thread {
         message.put("origin", "" + port);
 
         for (int otherPort : otherNodePorts) {
+            // Platform.runLater(() -> {
+            //     threadsController.animateSendMessage("candidate", nodeId, otherPort - 5000);
+            // });
             sendMessage(message, otherPort);
         }
 
