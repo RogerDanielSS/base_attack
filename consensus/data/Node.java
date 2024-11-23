@@ -4,10 +4,7 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-import javafx.application.Platform;
-
 public class Node extends Thread {
-    private final NodesThreadsController threadsController;
     private final int nodeId;
     private final int port;
     private final List<Integer> otherNodePorts;
@@ -27,13 +24,12 @@ public class Node extends Thread {
     private int orderVotingResponses = 0;
     private int positiveOrderVotingResponses = 0;
 
-    public Node(NodesThreadsController threadsController, int nodeId, ArrayList<Integer> numbers, int port,
+    public Node(int nodeId, ArrayList<Integer> numbers, int port,
             List<Integer> otherNodePorts) {
         this.nodeId = nodeId;
         this.numbers = numbers;
         this.port = port;
         this.otherNodePorts = otherNodePorts;
-        this.threadsController = threadsController;
     }
 
     @Override
@@ -73,9 +69,7 @@ public class Node extends Thread {
     }
 
     private void handleLackOfLeader() {
-        Platform.runLater(() -> {
-            threadsController.setSoldierSubtitle(nodeId, "Candidate", "yellow");
-        });
+        System.out.println("Node " + nodeId + ": candidated");
         positiveLeaderCandidatationResponses = 0;
         leaderCandidatationResponses = 0;
 
@@ -86,9 +80,6 @@ public class Node extends Thread {
         message.put("origin", "" + port);
 
         for (int otherPort : otherNodePorts) {
-            // Platform.runLater(() -> {
-            //     threadsController.animateSendMessage("candidate", nodeId, otherPort - 5000);
-            // });
             sendMessage(message, otherPort);
         }
 
@@ -118,8 +109,6 @@ public class Node extends Thread {
 
         try {
             while (orderVotingResponses != 9 && positiveOrderVotingResponses <= 6) {
-                System.out.println(nodeId + " orderVotingResponses: " + orderVotingResponses);
-                System.out.println(nodeId + " positiveOrderVotingResponses: " + positiveOrderVotingResponses);
                 Thread.sleep(500);
             }
         } catch (Exception e) {
@@ -133,7 +122,7 @@ public class Node extends Thread {
     }
 
     private void defineLeadership() {
-        System.out.println("candidate " + port + " has " + positiveLeaderCandidatationResponses + " votes");
+        System.out.println("candidate " + "Node " + nodeId + " has " + positiveLeaderCandidatationResponses + " votes");
         HashMap<String, String> message = new HashMap<String, String>();
 
         String content = "IM-NOT-THE-LEADER";
@@ -153,7 +142,7 @@ public class Node extends Thread {
     }
 
     private void dropLeadership() {
-        System.out.println(port + ": Order disapproved. Droping leadership");
+        System.out.println("Node " + nodeId + ": Order disapproved. Droping leadership");
         HashMap<String, String> message = new HashMap<String, String>();
 
         message.put("type", "leader-definition");
@@ -165,7 +154,7 @@ public class Node extends Thread {
     }
 
     private void sendMyOrderToFollowers() {
-        System.out.println(port + ": Order approved. Broadcasting");
+        System.out.println("Node " + nodeId + ": Order approved. Broadcasting");
         HashMap<String, String> message = new HashMap<String, String>();
 
         message.put("type", "order-definition");
@@ -248,7 +237,7 @@ public class Node extends Thread {
     private void verifyAndSetLeader(HashMap<String, String> message) {
         if (message.get("content").equals("IM-THE-LEADER")) {
 
-            System.out.println("Node " + nodeId + " defined port " + message.get("origin") + " as its leader");
+            System.out.println("Node " + nodeId + " defined node " + (Integer.parseInt(message.get("origin")) - 5000) + " as its leader");
             leaderPort = Integer.parseInt(message.get("origin"));
             expectingForLeaderResponse = false;
             expectedLeaderPort = "";

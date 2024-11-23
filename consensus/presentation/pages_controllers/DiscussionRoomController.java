@@ -47,7 +47,7 @@ public class DiscussionRoomController implements Initializable {
 
     PLAY.setOnAction(event -> {
       // animateSendMessage("test", 0, 4);
-      new NodesThreadsController(this).start();
+      new NodesThreadsController().start();
     });
 
   }
